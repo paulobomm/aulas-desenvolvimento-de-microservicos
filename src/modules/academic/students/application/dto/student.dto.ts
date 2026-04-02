@@ -3,6 +3,9 @@ import type { Student } from "@academic/students/domain/models/student.entity";
 
 export class StudentDto {
   @ApiProperty()
+  public id?: string;
+
+  @ApiProperty()
   public name: string;
 
   @ApiProperty()
@@ -15,11 +18,13 @@ export class StudentDto {
   public registration: string;
 
   private constructor(
+    id: string | undefined,
     name: string,
     email: string,
     document: string,
     registration: string,
   ) {
+    this.id = id;
     this.name = name;
     this.email = email;
     this.document = document;
@@ -29,6 +34,7 @@ export class StudentDto {
   public static from(student: Student | null): StudentDto | null {
     if (!student) return null;
     return new StudentDto(
+      student.id,
       student.name,
       student.email,
       student.document,

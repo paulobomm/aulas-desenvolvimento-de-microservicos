@@ -1,4 +1,6 @@
 import { StudentDto } from "@academic/students/application/dto/student.dto";
+import { CreateStudentDto } from "@academic/students/application/dto/create-student.dto";
+import { UpdateStudentDto } from "@academic/students/application/dto/update-student.dto";
 import { Student } from "@academic/students/domain/models/student.entity";
 import {
   STUDENT_REPOSITORY,
@@ -10,6 +12,7 @@ import {
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
+import { PaginatedResponse, PaginatedResponseBuilder, PaginationParams } from "@shared/infra/http/paginated-response";
 
 @Injectable()
 export class StudentService {
@@ -18,7 +21,7 @@ export class StudentService {
     private readonly studentRepository: StudentRepository,
   ) {}
 
-  async create(dto: StudentDto): Promise<void> {
+  async create(dto: CreateStudentDto): Promise<void> {
     const existing = await this.studentRepository.findByEmail(dto.email);
 
     if (existing) {
@@ -29,7 +32,7 @@ export class StudentService {
     await this.studentRepository.create(student!);
   }
 
-  async edit(id: string, dto: StudentDto): Promise<void> {
+  async edit(id: string, dto: UpdateStudentDto): Promise<void> {
     const student = await this.studentRepository.findById(id);
 
     if (!student) {
@@ -44,7 +47,10 @@ export class StudentService {
       }
     }
 
-    student.withName(dto.name).withEmail(dto.email).withDocument(dto.document);
+    if (dto.name) student.withName(dto.name);
+    if (dto.email) student.withEmail(dto.email);
+    if (dto.document) student.withDocument(dto.document);
+    
     await this.studentRepository.update(student!);
   }
 
@@ -55,6 +61,27 @@ export class StudentService {
   async list(): Promise<StudentDto[]> {
     const response = await this.studentRepository.findAll();
     return response.map((row) => StudentDto.from(row)!);
+  }
+
+  async listPaginated(
+    params: PaginationParams,
+    basePath: string,
+  ): Promise<PaginatedResponse<StudentDto>> {
+    const skip = (params.page - 1) * params.limit;
+    const allStudents = await this.studentRepository.findAll();
+    
+    const totalItems = allStudents.length;
+    const paginatedStudents = allStudents
+      .slice(skip, skip + params.limit)
+      .map((row) => StudentDto.from(row)!);
+
+    return new PaginatedResponseBuilder(
+      paginatedStudents,
+      totalItems,
+      params.page,
+      params.limit,
+      basePath,
+    ).build();
   }
 
   async findById(id: string): Promise<StudentDto | null> {
