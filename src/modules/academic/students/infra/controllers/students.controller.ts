@@ -10,11 +10,14 @@ import {
   Put,
 } from "@nestjs/common";
 
+<<<<<<< HEAD
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
 @ApiTags("students")
 
 
+=======
+>>>>>>> a65c4e0ed418d3fa96efb007e6da73ba159394f8
 @Controller("students")
 export class StudentsController {
   constructor(private readonly studentService: StudentService) {}
