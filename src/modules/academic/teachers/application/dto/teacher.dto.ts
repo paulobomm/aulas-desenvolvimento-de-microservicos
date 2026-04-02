@@ -3,6 +3,9 @@ import type { Teacher } from "@academic/teachers/domain/models/teacher.entity";
 
 export class TeacherDto {
   @ApiProperty()
+  public id?: string;
+
+  @ApiProperty()
   public name: string;
 
   @ApiProperty()
@@ -21,6 +24,7 @@ export class TeacherDto {
   public admissionDate: Date;
 
   private constructor(
+    id: string | undefined,
     name: string,
     email: string,
     document: string,
@@ -28,6 +32,7 @@ export class TeacherDto {
     specialization: string,
     admissionDate: Date,
   ) {
+    this.id = id;
     this.name = name;
     this.email = email;
     this.document = document;
@@ -39,6 +44,7 @@ export class TeacherDto {
   public static from(teacher: Teacher | null): TeacherDto | null {
     if (!teacher) return null;
     return new TeacherDto(
+      teacher.id,
       teacher.name,
       teacher.email,
       teacher.document,

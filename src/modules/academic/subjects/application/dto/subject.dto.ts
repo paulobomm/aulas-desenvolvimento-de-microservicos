@@ -3,6 +3,9 @@ import type { Subject } from "@academic/subjects/domain/models/subject.entity";
 
 export class SubjectDto {
   @ApiProperty()
+  public id?: string;
+
+  @ApiProperty()
   public name: string;
 
   @ApiProperty()
@@ -15,11 +18,13 @@ export class SubjectDto {
   public description: string;
 
   private constructor(
+    id: string | undefined,
     name: string,
     code: string,
     workload: number,
     description: string,
   ) {
+    this.id = id;
     this.name = name;
     this.code = code;
     this.workload = workload;
@@ -29,6 +34,7 @@ export class SubjectDto {
   public static from(subject: Subject | null): SubjectDto | null {
     if (!subject) return null;
     return new SubjectDto(
+      subject.id,
       subject.name,
       subject.code,
       subject.workload,
