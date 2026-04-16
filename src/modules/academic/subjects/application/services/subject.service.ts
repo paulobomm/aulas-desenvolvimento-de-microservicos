@@ -10,6 +10,7 @@ import {
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
+import { PaginatedResponse, PaginatedResponseBuilder, PaginationParams } from "@shared/infra/http/paginated-response";
 
 @Injectable()
 export class SubjectService {
@@ -60,6 +61,27 @@ export class SubjectService {
   async list(): Promise<SubjectDto[]> {
     const response = await this.subjectRepository.findAll();
     return response.map((row) => SubjectDto.from(row)!);
+  }
+
+  async listPaginated(
+    params: PaginationParams,
+    basePath: string,
+  ): Promise<PaginatedResponse<SubjectDto>> {
+    const skip = (params.page - 1) * params.limit;
+    const allSubjects = await this.subjectRepository.findAll();
+    
+    const totalItems = allSubjects.length;
+    const paginatedSubjects = allSubjects
+      .slice(skip, skip + params.limit)
+      .map((row) => SubjectDto.from(row)!);
+
+    return new PaginatedResponseBuilder(
+      paginatedSubjects,
+      totalItems,
+      params.page,
+      params.limit,
+      basePath,
+    ).build();
   }
 
   async findById(id: string): Promise<SubjectDto | null> {
