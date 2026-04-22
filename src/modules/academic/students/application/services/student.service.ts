@@ -22,6 +22,10 @@ export class StudentService {
   ) {}
 
   async create(dto: CreateStudentDto): Promise<void> {
+    if (!dto.email || !dto.name || !dto.document || !dto.registration) {
+      throw new Error('Email, name, document and registration are required');
+    }
+
     const existing = await this.studentRepository.findByEmail(dto.email);
 
     if (existing) {
