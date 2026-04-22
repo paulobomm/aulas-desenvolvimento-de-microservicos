@@ -1,11 +1,11 @@
 export class Teacher {
   private readonly _id?: string;
-  private _name: string;
-  private _email: string;
-  private _document: string;
-  private _degree: string;
-  private _specialization: string;
-  private _admissionDate: Date;
+  private _name: string = '';
+  private _email: string = '';
+  private _document: string = '';
+  private _degree: string = '';
+  private _specialization: string = '';
+  private _admissionDate: Date = new Date();
   private readonly _createdAt?: Date;
   private readonly _updatedAt?: Date;
 
@@ -83,16 +83,20 @@ export class Teacher {
 
   static restore(props?: {
     id?: string;
-    name: string;
-    email: string;
-    document: string;
-    degree: string;
-    specialization: string;
-    admissionDate: Date;
+    name?: string;
+    email?: string;
+    document?: string;
+    degree?: string;
+    specialization?: string;
+    admissionDate?: Date;
     createdAt?: Date;
     updatedAt?: Date;
   }): Teacher | null {
     if (!props) return null;
+
+    if (!props.name || !props.email || !props.document || !props.degree || !props.specialization || !props.admissionDate) {
+      throw new Error('Name, email, document, degree, specialization and admissionDate are required');
+    }
 
     const teacher = new Teacher(props.id, props.createdAt, props.updatedAt);
 

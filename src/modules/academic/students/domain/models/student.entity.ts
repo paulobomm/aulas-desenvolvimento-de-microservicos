@@ -1,9 +1,9 @@
 export class Student {
   private readonly _id?: string;
-  private _name: string;
-  private _email: string;
-  private _document: string;
-  private _registration: string;
+  private _name: string = '';
+  private _email: string = '';
+  private _document: string = '';
+  private _registration: string = '';
   private readonly _createdAt?: Date;
   private readonly _updatedAt?: Date;
 
@@ -63,14 +63,18 @@ export class Student {
 
   static restore(props?: {
     id?: string;
-    name: string;
-    email: string;
-    document: string;
-    registration: string;
+    name?: string;
+    email?: string;
+    document?: string;
+    registration?: string;
     createdAt?: Date;
     updatedAt?: Date;
   }): Student | null {
     if (!props) return null;
+
+    if (!props.name || !props.email || !props.document || !props.registration) {
+      throw new Error('Name, email, document and registration are required');
+    }
 
     const student = new Student(props.id, props.createdAt, props.updatedAt);
 
