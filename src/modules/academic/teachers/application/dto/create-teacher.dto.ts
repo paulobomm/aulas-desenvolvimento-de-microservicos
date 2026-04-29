@@ -6,33 +6,33 @@ export class CreateTeacherDto {
   @ApiProperty({ example: "John Doe" })
   @IsString()
   @IsNotEmpty()
-  name: string;
+  name?: string;
 
   @ApiProperty({ example: "john@university.com" })
   @IsEmail()
   @IsNotEmpty()
-  email: string;
+  email?: string;
 
   @ApiProperty({ example: "123.456.789-00" })
   @IsString()
   @IsNotEmpty()
-  document: string;
+  document?: string;
 
   @ApiProperty({ example: "PhD in Computer Science" })
   @IsString()
   @IsNotEmpty()
-  degree: string;
+  degree?: string;
 
   @ApiProperty({ example: "Artificial Intelligence" })
   @IsString()
   @IsNotEmpty()
-  specialization: string;
+  specialization?: string;
 
   @ApiProperty({ example: "2020-01-15" })
   @Type(() => Date)
   @IsDate()
   @IsNotEmpty()
-  admissionDate: Date;
+  admissionDate?: Date;
 }
 //   createdAt: timestamp("created_at", { withTimezone: true }).notNull(),
 //   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull(),

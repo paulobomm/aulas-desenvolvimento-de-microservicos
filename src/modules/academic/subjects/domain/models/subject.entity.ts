@@ -1,9 +1,9 @@
 export class Subject {
   private readonly _id?: string;
-  private _name: string;
-  private _code: string;
-  private _workload: number;
-  private _description: string;
+  private _name!: string;
+  private _code!: string;
+  private _workload!: number;
+  private _description!: string;
   private readonly _createdAt?: Date;
   private readonly _updatedAt?: Date;
 

@@ -22,6 +22,10 @@ export class TeacherService {
   ) {}
 
   async create(dto: CreateTeacherDto): Promise<void> {
+    if (!dto.email || !dto.name || !dto.document || !dto.degree || !dto.specialization || !dto.admissionDate) {
+      throw new Error('Email, name, document, degree, specialization and admissionDate are required');
+    }
+
     const existing = await this.teacherRepository.findByEmail(dto.email);
 
     if (existing) {

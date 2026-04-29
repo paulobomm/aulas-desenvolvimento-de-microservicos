@@ -15,7 +15,7 @@ import {
   Query,
   Req,
 } from "@nestjs/common";
-import { Request } from "express";
+import type { Request } from "express";
 
 import {
   ApiBearerAuth,
@@ -43,7 +43,7 @@ export class SubjectsController {
   async findAll(
     @Query("_page", new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query("_size", new DefaultValuePipe(10), ParseIntPipe) limit: number,
-    @Req() req: Request,
+    @Req() req: Request
   ): Promise<PaginatedResponse<SubjectDto>> {
     const basePath = `${req.protocol}://${req.get("host")}/v1/subjects`;
     return this.subjectService.listPaginated({ page, limit }, basePath);
