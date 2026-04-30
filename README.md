@@ -57,7 +57,17 @@ npm run build
 npm run start:prod
 ```
 
-A API ficará disponível em `http://localhost:3001` (ou na porta configurada em `PORT`).
+### Comandos para rodar o projeto
+
+```bash
+npm install          ---->> Para instalar as dependencias do arquivo package.json
+npm run db:migrate   ---->> Para fazer a migração do banco de dados
+npm run start:dev    ---->> Para acessar documentação --->> http://localhost:3010/docs
+npm run db:studio    ---->> Para conferir se está salvando no banco -->> https://local.drizzle.studio
+
+```
+
+A API ficará disponível em `http://localhost:3010` (ou na porta configurada em `PORT`).
 
 ---
 
@@ -77,6 +87,8 @@ A API ficará disponível em `http://localhost:3001` (ou na porta configurada em
 | `npm run check` | Executa lint + formatação (Biome) |
 
 ---
+
+
 
 ## Subindo o PostgreSQL com Docker
 
