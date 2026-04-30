@@ -4,19 +4,25 @@ import {
   SUBJECT_REPOSITORY,
   type SubjectRepository,
 } from "@academic/subjects/domain/repositories/subject-repository.interface";
+import { SubjectsPublisher } from "@academic/subjects/infra/messaging/subjects.publisher";
 import {
   ConflictException,
   Inject,
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
-import { PaginatedResponse, PaginatedResponseBuilder, PaginationParams } from "@shared/infra/http/paginated-response";
+import {
+  PaginatedResponse,
+  PaginatedResponseBuilder,
+  PaginationParams,
+} from "@shared/infra/http/paginated-response";
 
 @Injectable()
 export class SubjectService {
   constructor(
     @Inject(SUBJECT_REPOSITORY)
     private readonly subjectRepository: SubjectRepository,
+    private readonly subjectsPublisher: SubjectsPublisher,
   ) {}
 
   async create(dto: SubjectDto): Promise<void> {
@@ -28,6 +34,8 @@ export class SubjectService {
 
     const subject = Subject.restore(dto);
     await this.subjectRepository.create(subject!);
+
+    this.subjectsPublisher.publishCreated(subject!);
   }
 
   async edit(id: string, dto: SubjectDto): Promise<void> {
@@ -52,10 +60,14 @@ export class SubjectService {
       .withDescription(dto.description);
 
     await this.subjectRepository.update(subject);
+
+    this.subjectsPublisher.publishUpdated(subject);
   }
 
   async remove(id: string): Promise<void> {
     await this.subjectRepository.delete(id);
+
+    this.subjectsPublisher.publishDeleted(id);
   }
 
   async list(): Promise<SubjectDto[]> {
@@ -69,7 +81,7 @@ export class SubjectService {
   ): Promise<PaginatedResponse<SubjectDto>> {
     const skip = (params.page - 1) * params.limit;
     const allSubjects = await this.subjectRepository.findAll();
-    
+
     const totalItems = allSubjects.length;
     const paginatedSubjects = allSubjects
       .slice(skip, skip + params.limit)
