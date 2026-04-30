@@ -24,7 +24,7 @@ Crie um arquivo `.env` na raiz do projeto com base no exemplo abaixo:
 
 ```env
 DATABASE_URL=postgres://postgres:postgres@localhost:5432/school_control
-PORT=3001
+PORT=3010
 ```
 
 | Variável | Descrição |
