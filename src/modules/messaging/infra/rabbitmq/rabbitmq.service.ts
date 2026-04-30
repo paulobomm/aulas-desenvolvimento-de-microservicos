@@ -11,8 +11,8 @@ import amqplib from "amqplib";
 @Injectable()
 export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(RabbitMQService.name);
-  private connection?: ChannelModel;
-  private channel?: Channel;
+  private connection: ChannelModel;
+  private channel: Channel;
 
   constructor(private readonly configService: ConfigService) {}
 
@@ -29,7 +29,7 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
     this.logger.log("RabbitMQ connection closed");
   }
 
-  getChannel(): Channel | undefined {
+  getChannel(): Channel {
     return this.channel;
   }
 }
