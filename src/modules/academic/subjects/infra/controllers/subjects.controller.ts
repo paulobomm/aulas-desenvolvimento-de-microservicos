@@ -1,4 +1,6 @@
 import { SubjectDto } from "@academic/subjects/application/dto/subject.dto";
+import { CreateSubjectDto } from "@academic/subjects/application/dto/create-subject.dto";
+import { UpdateSubjectDto } from "@academic/subjects/application/dto/update-subject.dto";
 import { SubjectService } from "@academic/subjects/application/services/subject.service";
 import {
   Body,
@@ -43,7 +45,7 @@ export class SubjectsController {
   async findAll(
     @Query("_page", new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query("_size", new DefaultValuePipe(10), ParseIntPipe) limit: number,
-    @Req() req: Request
+    @Req() req: Request,
   ): Promise<PaginatedResponse<SubjectDto>> {
     const basePath = `${req.protocol}://${req.get("host")}/v1/subjects`;
     return this.subjectService.listPaginated({ page, limit }, basePath);
@@ -60,7 +62,7 @@ export class SubjectsController {
   @Post()
   @ApiOperation({ summary: "Criar disciplina" })
   @ApiCreatedResponse({ description: "Disciplina criada" })
-  async create(@Body() body: SubjectDto): Promise<void> {
+  async create(@Body() body: CreateSubjectDto): Promise<void> {
     return this.subjectService.create(body);
   }
 
@@ -69,7 +71,10 @@ export class SubjectsController {
   @ApiOperation({ summary: "Atualizar disciplina" })
   @ApiNoContentResponse({ description: "Disciplina atualizada" })
   @ApiNotFoundResponse({ description: "Disciplina não encontrada" })
-  async update(@Param("id") id: string, @Body() body: SubjectDto): Promise<void> {
+  async update(
+    @Param("id") id: string,
+    @Body() body: UpdateSubjectDto,
+  ): Promise<void> {
     return this.subjectService.edit(id, body);
   }
 

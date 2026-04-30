@@ -1,6 +1,7 @@
 import { AcademicModule } from "@academic/academic.module";
+import { MessagingModule } from "@messaging/messaging.module";
 // import { AttendanceModule } from "@attendance/attendance.module";
-//import { AuthModule } from "@auth/auth.module";
+// import { AuthModule } from "@auth/auth.module";
 // import { ClassOfferingModule } from "@class-offering/class-offering.module";
 // import { EnrollmentModule } from "@enrollment/enrollment.module";
 import { Module } from "@nestjs/common";
@@ -12,6 +13,7 @@ import { SharedModule } from "@shared/shared.module";
   imports: [
     ConfigModule.forRoot(),
     SharedModule,
+    MessagingModule,
     // UsersModule,
     // AuthModule,
     AcademicModule,
@@ -20,4 +22,4 @@ import { SharedModule } from "@shared/shared.module";
     // AttendanceModule,
   ],
 })
-export class AppModule {} 
+export class AppModule {}

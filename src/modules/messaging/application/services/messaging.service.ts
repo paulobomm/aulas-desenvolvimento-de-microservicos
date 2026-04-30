@@ -1,5 +1,5 @@
-import { RabbitMQService } from "@messaging/infra/rabbitmq/rabbitmq.service";
 import { Injectable, Logger } from "@nestjs/common";
+import { RabbitMQService } from "@messaging/infra/rabbitmq/rabbitmq.service";
 
 @Injectable()
 export class MessagingService {
@@ -7,16 +7,8 @@ export class MessagingService {
 
   constructor(private readonly rabbitMQService: RabbitMQService) {}
 
-  private getChannel() {
-    const channel = this.rabbitMQService.getChannel();
-    if (!channel) {
-      throw new Error("RabbitMQ channel is not available");
-    }
-    return channel;
-  }
-
   async assertExchange(name: string, type = "direct"): Promise<void> {
-    const channel = this.getChannel();
+    const channel = this.rabbitMQService.getChannel();
     await channel.assertExchange(name, type, { durable: true });
     this.logger.debug(`Exchange asserted: ${name}`);
   }
@@ -26,7 +18,7 @@ export class MessagingService {
     exchangeName: string,
     routingKey: string,
   ): Promise<void> {
-    const channel = this.getChannel();
+    const channel = this.rabbitMQService.getChannel();
     await channel.assertQueue(queueName, { durable: true });
     await channel.bindQueue(queueName, exchangeName, routingKey);
     this.logger.debug(
@@ -35,7 +27,7 @@ export class MessagingService {
   }
 
   publish(exchangeName: string, routingKey: string, payload: object): void {
-    const channel = this.getChannel();
+    const channel = this.rabbitMQService.getChannel();
     channel.publish(
       exchangeName,
       routingKey,
@@ -51,7 +43,7 @@ export class MessagingService {
     queueName: string,
     handler: (payload: unknown) => Promise<void>,
   ): Promise<void> {
-    const channel = this.getChannel();
+    const channel = this.rabbitMQService.getChannel();
 
     await channel.consume(queueName, async (msg) => {
       if (!msg) return;

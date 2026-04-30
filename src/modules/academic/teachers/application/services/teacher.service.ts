@@ -122,4 +122,3 @@ export class TeacherService {
     return TeacherDto.from(response);
   }
 }
- 

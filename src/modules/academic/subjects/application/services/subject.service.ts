@@ -1,4 +1,6 @@
 import { SubjectDto } from "@academic/subjects/application/dto/subject.dto";
+import { CreateSubjectDto } from "@academic/subjects/application/dto/create-subject.dto";
+import { UpdateSubjectDto } from "@academic/subjects/application/dto/update-subject.dto";
 import { Subject } from "@academic/subjects/domain/models/subject.entity";
 import {
   SUBJECT_REPOSITORY,
@@ -25,20 +27,25 @@ export class SubjectService {
     private readonly subjectsPublisher: SubjectsPublisher,
   ) {}
 
-  async create(dto: SubjectDto): Promise<void> {
+  async create(dto: CreateSubjectDto): Promise<void> {
     const existing = await this.subjectRepository.findByCode(dto.code);
 
     if (existing) {
       throw new ConflictException("Code already registered");
     }
 
-    const subject = Subject.restore(dto);
-    await this.subjectRepository.create(subject!);
+    const subject = Subject.restore({
+      name: dto.name,
+      code: dto.code,
+      workload: dto.workload,
+      description: dto.description,
+    });
 
+    await this.subjectRepository.create(subject!);
     this.subjectsPublisher.publishCreated(subject!);
   }
 
-  async edit(id: string, dto: SubjectDto): Promise<void> {
+  async edit(id: string, dto: UpdateSubjectDto): Promise<void> {
     const subject = await this.subjectRepository.findById(id);
 
     if (!subject) {
@@ -53,14 +60,12 @@ export class SubjectService {
       }
     }
 
-    subject
-      .withName(dto.name)
-      .withCode(dto.code)
-      .withWorkload(dto.workload)
-      .withDescription(dto.description);
+    if (dto.name) subject.withName(dto.name);
+    if (dto.code) subject.withCode(dto.code);
+    if (dto.workload) subject.withWorkload(dto.workload);
+    if (dto.description) subject.withDescription(dto.description);
 
     await this.subjectRepository.update(subject);
-
     this.subjectsPublisher.publishUpdated(subject);
   }
 
