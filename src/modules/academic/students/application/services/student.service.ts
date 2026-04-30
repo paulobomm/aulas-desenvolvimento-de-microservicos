@@ -6,24 +6,30 @@ import {
   STUDENT_REPOSITORY,
   type StudentRepository,
 } from "@academic/students/domain/repositories/student-repository.interface";
+import { StudentsPublisher } from "@academic/students/infra/messaging/students.publisher";
 import {
   ConflictException,
   Inject,
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
-import { PaginatedResponse, PaginatedResponseBuilder, PaginationParams } from "@shared/infra/http/paginated-response";
+import {
+  PaginatedResponse,
+  PaginatedResponseBuilder,
+  PaginationParams,
+} from "@shared/infra/http/paginated-response";
 
 @Injectable()
 export class StudentService {
   constructor(
     @Inject(STUDENT_REPOSITORY)
     private readonly studentRepository: StudentRepository,
+    private readonly studentsPublisher: StudentsPublisher,
   ) {}
 
   async create(dto: CreateStudentDto): Promise<void> {
     if (!dto.email || !dto.name || !dto.document || !dto.registration) {
-      throw new Error('Email, name, document and registration are required');
+      throw new Error("Email, name, document and registration are required");
     }
 
     const existing = await this.studentRepository.findByEmail(dto.email);
@@ -34,6 +40,8 @@ export class StudentService {
 
     const student = Student.restore(dto);
     await this.studentRepository.create(student!);
+
+    this.studentsPublisher.publishCreated(student!);
   }
 
   async edit(id: string, dto: UpdateStudentDto): Promise<void> {
@@ -54,12 +62,16 @@ export class StudentService {
     if (dto.name) student.withName(dto.name);
     if (dto.email) student.withEmail(dto.email);
     if (dto.document) student.withDocument(dto.document);
-    
+
     await this.studentRepository.update(student!);
+
+    this.studentsPublisher.publishUpdated(student!);
   }
 
   async remove(id: string): Promise<void> {
     await this.studentRepository.delete(id);
+
+    this.studentsPublisher.publishDeleted(id);
   }
 
   async list(): Promise<StudentDto[]> {
@@ -73,7 +85,7 @@ export class StudentService {
   ): Promise<PaginatedResponse<StudentDto>> {
     const skip = (params.page - 1) * params.limit;
     const allStudents = await this.studentRepository.findAll();
-    
+
     const totalItems = allStudents.length;
     const paginatedStudents = allStudents
       .slice(skip, skip + params.limit)

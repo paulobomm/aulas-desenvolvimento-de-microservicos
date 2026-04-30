@@ -1,29 +1,44 @@
-import { TeacherDto } from "@academic/teachers/application/dto/teacher.dto";
 import { CreateTeacherDto } from "@academic/teachers/application/dto/create-teacher.dto";
+import { TeacherDto } from "@academic/teachers/application/dto/teacher.dto";
 import { UpdateTeacherDto } from "@academic/teachers/application/dto/update-teacher.dto";
 import { Teacher } from "@academic/teachers/domain/models/teacher.entity";
 import {
   TEACHER_REPOSITORY,
   type TeacherRepository,
 } from "@academic/teachers/domain/repositories/teacher-repository.interface";
+import { TeachersPublisher } from "@academic/teachers/infra/messaging/teachers.publisher";
 import {
   ConflictException,
   Inject,
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
-import { PaginatedResponse, PaginatedResponseBuilder, PaginationParams } from "@shared/infra/http/paginated-response";
+import {
+  PaginatedResponse,
+  PaginatedResponseBuilder,
+  PaginationParams,
+} from "@shared/infra/http/paginated-response";
 
 @Injectable()
 export class TeacherService {
   constructor(
     @Inject(TEACHER_REPOSITORY)
     private readonly teacherRepository: TeacherRepository,
+    private readonly teachersPublisher: TeachersPublisher,
   ) {}
 
   async create(dto: CreateTeacherDto): Promise<void> {
-    if (!dto.email || !dto.name || !dto.document || !dto.degree || !dto.specialization || !dto.admissionDate) {
-      throw new Error('Email, name, document, degree, specialization and admissionDate are required');
+    if (
+      !dto.email ||
+      !dto.name ||
+      !dto.document ||
+      !dto.degree ||
+      !dto.specialization ||
+      !dto.admissionDate
+    ) {
+      throw new Error(
+        "Email, name, document, degree, specialization and admissionDate are required",
+      );
     }
 
     const existing = await this.teacherRepository.findByEmail(dto.email);
@@ -34,6 +49,8 @@ export class TeacherService {
 
     const teacher = Teacher.restore(dto);
     await this.teacherRepository.create(teacher!);
+
+    this.teachersPublisher.publishCreated(teacher!);
   }
 
   async edit(id: string, dto: UpdateTeacherDto): Promise<void> {
@@ -59,10 +76,14 @@ export class TeacherService {
     if (dto.admissionDate) teacher.withAdmissionDate(dto.admissionDate);
 
     await this.teacherRepository.update(teacher);
+
+    this.teachersPublisher.publishUpdated(teacher);
   }
 
   async remove(id: string): Promise<void> {
     await this.teacherRepository.delete(id);
+
+    this.teachersPublisher.publishDeleted(id);
   }
 
   async list(): Promise<TeacherDto[]> {
@@ -76,7 +97,7 @@ export class TeacherService {
   ): Promise<PaginatedResponse<TeacherDto>> {
     const skip = (params.page - 1) * params.limit;
     const allTeachers = await this.teacherRepository.findAll();
-    
+
     const totalItems = allTeachers.length;
     const paginatedTeachers = allTeachers
       .slice(skip, skip + params.limit)
@@ -101,3 +122,4 @@ export class TeacherService {
     return TeacherDto.from(response);
   }
 }
+ 
