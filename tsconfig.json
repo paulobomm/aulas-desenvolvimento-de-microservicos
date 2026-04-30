@@ -14,7 +14,6 @@
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
-    "ignoreDeprecations": ["6.0"],
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": true,
@@ -25,7 +24,6 @@
     "paths": {
       "@shared/*": ["src/shared/*"],
       "@academic/*": ["src/modules/academic/*"],
-      "@messaging/*": ["src/modules/messaging/*"]
       // "@class-offering/*": ["src/modules/class-offering/*"],
       // "@enrollment/*": ["src/modules/enrollment/*"],
       // "@attendance/*": ["src/modules/attendance/*"],
