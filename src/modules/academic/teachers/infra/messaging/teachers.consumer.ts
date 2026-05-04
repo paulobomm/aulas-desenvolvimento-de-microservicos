@@ -1,5 +1,5 @@
-import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import { MessagingService } from "@messaging/application/services/messaging.service";
+import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 
 // ─── Exchanges do auth (criadas pelo serviço auth; apenas declaramos aqui
 //     para garantir existência antes do bind) ─────────────────────────────
@@ -62,9 +62,9 @@ export class TeachersConsumer implements OnModuleInit {
     );
 
     // Registra os handlers de consumo (push)
-    await this.messagingService.consume(QUEUES.created, (payload) =>
-      this.handleUserCreated(payload as AuthUserPayload),
-    );
+    await this.messagingService.consume(QUEUES.created, (payload) => {
+      return this.handleUserCreated(payload as AuthUserPayload);
+    });
 
     await this.messagingService.consume(QUEUES.updated, (payload) =>
       this.handleUserUpdated(payload as AuthUserPayload),

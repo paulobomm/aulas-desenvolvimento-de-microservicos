@@ -8,11 +8,12 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate:pg",
+    "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "lint": "biome lint .",
-    "check": "biome check ."
+    "check": "biome check .",
+    "ignite": "sudo docker compose up -d && cp .env.sample .env && npm run db:migrate && npm run start:dev"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",

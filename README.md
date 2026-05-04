@@ -23,14 +23,16 @@ npm install
 Crie um arquivo `.env` na raiz do projeto com base no exemplo abaixo:
 
 ```env
-DATABASE_URL=postgres://postgres:postgres@localhost:5432/school_control
+DATABASE_URL=postgres://postgres:postgres@localhost:5552/school_control
 PORT=3010
+RABBITMQ_URL=amqp://guest:guest@localhost:5673
 ```
 
-| Variável | Descrição |
-|---|---|
+| Variável       | Descrição                       |
+| -------------- | ------------------------------- |
 | `DATABASE_URL` | Connection string do PostgreSQL |
-| `PORT` | Porta em que a API vai subir |
+| `PORT`         | Porta em que a API vai subir    |
+| `RABBITMQ_URL` | Connection string do RabbitMQ   |
 
 ### 3. Criar e migrar o banco de dados
 
@@ -59,36 +61,40 @@ npm run start:prod
 
 ### Comandos para rodar o projeto
 
-```bash
-npm install          ---->> Para instalar as dependencias do arquivo package.json
-npm run db:migrate   ---->> Para fazer a migração do banco de dados
-npm run start:dev    ---->> Para acessar documentação --->> http://localhost:3010/docs
-npm run db:studio    ---->> Para conferir se está salvando no banco -->> https://local.drizzle.studio
+Execute os comandos abaixo na raiz do projeto:
 
-```
+| Script                      | Descrição                                                  |
+| --------------------------- | ---------------------------------------------------------- |
+| `npm install`               | Instala todas as dependencias                              |
+| `sudo docker compose up -d` | Sobe container do docker                                   |
+| `npm run db:migrate`        | Aplica as migrations no banco                              |
+| `npm run start:dev`         | Inicia em modo desenvolvimento com hot reload              |
+| `npm run db:studio`         | Abre o Drizzle Studio para inspecionar o banco visualmente |  ---->>> https://local.drizzle.studio/
+
+--->> http://localhost:15672/       // Aqui verifica se o RabbitMq está recebendo as informações  (Usuário: guest  // senha: guest)
+
+--->> http://localhost:3010/docs   // Para conferir a documentação no swagger
+
+
+
+### Outros comandos caso precise
+
+| Script                       | Descrição                                                  |
+| ---------------------------- | ---------------------------------------------------------- |
+| `npm run start`              | Inicia sem hot reload                                      |
+| `npm run start:prod`         | Inicia o build de produção                                 |
+| `npm run build`              | Gera o build de produção em `dist/`                        |
+| `npm run db:generate`        | Gera arquivos de migration a partir dos schemas            |
+| `npm run db:push`            | Sincroniza o schema diretamente no banco (sem migration)   |
+| `npm run lint`               | Executa o linter (Biome)                                   |
+| `npm run check`              | Executa lint + formatação (Biome)                          |
+| `sudo docker-compose up -d`  | Se sua instalação usa Docker Compose v1              | 
+
+
 
 A API ficará disponível em `http://localhost:3010` (ou na porta configurada em `PORT`).
 
 ---
-
-## Scripts disponíveis
-
-| Script | Descrição |
-|---|---|
-| `npm run start:dev` | Inicia em modo desenvolvimento com hot reload |
-| `npm run start` | Inicia sem hot reload |
-| `npm run start:prod` | Inicia o build de produção |
-| `npm run build` | Gera o build de produção em `dist/` |
-| `npm run db:generate` | Gera arquivos de migration a partir dos schemas |
-| `npm run db:migrate` | Aplica as migrations no banco |
-| `npm run db:push` | Sincroniza o schema diretamente no banco (sem migration) |
-| `npm run db:studio` | Abre o Drizzle Studio para inspecionar o banco visualmente |
-| `npm run lint` | Executa o linter (Biome) |
-| `npm run check` | Executa lint + formatação (Biome) |
-
----
-
-
 
 ## Subindo o PostgreSQL com Docker
 

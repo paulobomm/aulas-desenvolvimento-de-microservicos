@@ -29,8 +29,8 @@ export class TeachersPublisher implements OnModuleInit {
     this.logger.log("Teachers exchanges asserted");
   }
 
-  publishCreated(teacher: Teacher): void {
-    this.messagingService.publish(EXCHANGES.created, ROUTING_KEYS.created, {
+  async publishCreated(teacher: Teacher): Promise<void> {
+    await this.messagingService.publish(EXCHANGES.created, ROUTING_KEYS.created, {
       id: teacher.id,
       name: teacher.name,
       email: teacher.email,
@@ -41,8 +41,8 @@ export class TeachersPublisher implements OnModuleInit {
     });
   }
 
-  publishUpdated(teacher: Teacher): void {
-    this.messagingService.publish(EXCHANGES.updated, ROUTING_KEYS.updated, {
+  async publishUpdated(teacher: Teacher): Promise<void> {
+    await this.messagingService.publish(EXCHANGES.updated, ROUTING_KEYS.updated, {
       id: teacher.id,
       name: teacher.name,
       email: teacher.email,
@@ -53,8 +53,8 @@ export class TeachersPublisher implements OnModuleInit {
     });
   }
 
-  publishDeleted(id: string): void {
-    this.messagingService.publish(EXCHANGES.deleted, ROUTING_KEYS.deleted, {
+  async publishDeleted(id: string): Promise<void> {
+    await this.messagingService.publish(EXCHANGES.deleted, ROUTING_KEYS.deleted, {
       id,
     });
   }

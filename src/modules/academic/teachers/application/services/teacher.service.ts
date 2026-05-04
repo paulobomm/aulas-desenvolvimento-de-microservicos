@@ -50,7 +50,7 @@ export class TeacherService {
     const teacher = Teacher.restore(dto);
     await this.teacherRepository.create(teacher!);
 
-    this.teachersPublisher.publishCreated(teacher!);
+    await this.teachersPublisher.publishCreated(teacher!);
   }
 
   async edit(id: string, dto: UpdateTeacherDto): Promise<void> {
@@ -77,13 +77,13 @@ export class TeacherService {
 
     await this.teacherRepository.update(teacher);
 
-    this.teachersPublisher.publishUpdated(teacher);
+    await this.teachersPublisher.publishUpdated(teacher);
   }
 
   async remove(id: string): Promise<void> {
     await this.teacherRepository.delete(id);
 
-    this.teachersPublisher.publishDeleted(id);
+    await this.teachersPublisher.publishDeleted(id);
   }
 
   async list(): Promise<TeacherDto[]> {

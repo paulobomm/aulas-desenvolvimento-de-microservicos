@@ -26,17 +26,28 @@ export class MessagingService {
     );
   }
 
-  publish(exchangeName: string, routingKey: string, payload: object): void {
+  async publish(exchangeName: string, routingKey: string, payload: object): Promise<void> {
     const channel = this.rabbitMQService.getChannel();
-    channel.publish(
-      exchangeName,
-      routingKey,
-      Buffer.from(JSON.stringify(payload)),
-      { persistent: true },
-    );
-    this.logger.debug(
-      `Message published to exchange "${exchangeName}" with key "${routingKey}"`,
-    );
+    
+    return new Promise((resolve, reject) => {
+      channel.publish(
+        exchangeName,
+        routingKey,
+        Buffer.from(JSON.stringify(payload)),
+        { persistent: true },
+        (err) => {
+          if (err) {
+            this.logger.error(`Message failed to publish to exchange "${exchangeName}": ${err.message}`);
+            reject(err);
+          } else {
+            this.logger.debug(
+              `Message confirmed by RabbitMQ on exchange "${exchangeName}" with key "${routingKey}"`,
+            );
+            resolve();
+          }
+        }
+      );
+    });
   }
 
   async consume(
