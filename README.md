@@ -10,15 +10,7 @@ API REST para gestão escolar, construída com NestJS + Drizzle ORM + PostgreSQL
 
 ---
 
-## Configuração
-
-### 1. Instalar dependências
-
-```bash
-npm install
-```
-
-### 2. Configurar variáveis de ambiente
+### 1. Configurar variáveis de ambiente (arquivo .ENV)
 
 Crie um arquivo `.env` na raiz do projeto com base no exemplo abaixo:
 
@@ -34,30 +26,6 @@ RABBITMQ_URL=amqp://guest:guest@localhost:5673
 | `PORT`         | Porta em que a API vai subir    |
 | `RABBITMQ_URL` | Connection string do RabbitMQ   |
 
-### 3. Criar e migrar o banco de dados
-
-Com o PostgreSQL rodando, execute as migrações para criar as tabelas:
-
-```bash
-npm run db:migrate
-```
-
----
-
-## Rodando a aplicação
-
-### Desenvolvimento (com hot reload)
-
-```bash
-npm run start:dev
-```
-
-### Produção
-
-```bash
-npm run build
-npm run start:prod
-```
 
 ### Comandos para rodar o projeto
 
@@ -96,7 +64,7 @@ A API ficará disponível em `http://localhost:3010` (ou na porta configurada em
 
 ---
 
-## Subindo o PostgreSQL com Docker
+## COnfigurações docker caso precise
 
 Caso não tenha o PostgreSQL instalado localmente, suba uma instância com Docker:
 
